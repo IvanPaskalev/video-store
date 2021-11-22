@@ -19,6 +19,27 @@ public class Main {
                         System.out.println("No input entered");
                     }
                 }
+                System.out.println("Enter year");
+                while (true){
+                    int year = new Scanner(System.in).nextInt();
+                    if (year != 0){
+                        movie.setYear(year);
+                        break;
+                    } else {
+                        System.out.println("No input entered");
+                    }
+                }
+                System.out.println("enter genre");
+                while (true){
+                    String genre = new Scanner(System.in).nextLine();
+                    if (!genre.isEmpty()){
+                        movie.setGenre(genre);
+                        break;
+                    } else {
+                        System.out.println("No input entered");
+                    }
+                }
+                System.out.println(movie);
 
                 break;
 
