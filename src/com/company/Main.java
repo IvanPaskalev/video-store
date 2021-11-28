@@ -1,5 +1,13 @@
 package com.company;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Main {
@@ -39,7 +47,25 @@ public class Main {
                         System.out.println("No input entered");
                     }
                 }
-                System.out.println(movie);
+                BufferedReader bufferedReader = null;
+                String movieAsString = movie.toString();
+                try {
+                    bufferedReader = new BufferedReader(new FileReader("dataBase.txt"));
+                    try {
+                        Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.APPEND);
+                        System.out.println("Movie saved");
+                    } catch (IOException e) {
+                        System.out.println("Error! Could not save the movie.");
+                    }
+
+                } catch (FileNotFoundException e) {
+                    try {
+                        Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes());
+                        System.out.println("Movie saved");
+                    } catch (IOException ex) {
+                        System.out.println("Error! Could not save the movie.");
+                    }
+                }
 
                 break;
 
