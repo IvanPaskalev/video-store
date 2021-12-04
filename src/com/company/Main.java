@@ -52,20 +52,20 @@ public class Main {
                             System.out.println("No input entered");
                         }
                     }
-                    String movieAsString = movie + "\n";
+                    String movieAsString = String.valueOf(movie)+"\n";
                     try {
-                        Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.APPEND);
+                        Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                         System.out.println("Movie saved");
 
                     } catch (FileNotFoundException e) {
                         try {
-                            Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes());
+                            Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                             System.out.println("Movie saved");
                         } catch (IOException ex) {
                             System.out.println("Error! Could not save the movie.");
                         }
                     } catch (IOException exception) {
-                        System.out.println("Error! Could not save the movie.");
+                        System.out.println("Error! Could not save the movie.")
                     }
                     break;
                 case 2:
