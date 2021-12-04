@@ -65,7 +65,7 @@ public class Main {
                             System.out.println("Error! Could not save the movie.");
                         }
                     } catch (IOException exception) {
-                        System.out.println("Error! Could not save the movie.")
+                        System.out.println("Error! Could not save the movie.");
                     }
                     break;
                 case 2:
@@ -97,9 +97,51 @@ public class Main {
                             break;
                         case 2:
                             System.out.println("Enter year");
+                            int year = new Scanner(System.in).nextInt();
+                            try {
+                                List<String> lines = Files.readAllLines(Paths.get("dataBase.txt"));
+                                List<Movie> movies = new ArrayList<>();
+                                for (String line : lines) {
+                                    String[] info = line.split(" ");
+                                    int index = Integer.parseInt(info[0]);
+                                    String name1 = info[1].replaceAll("_!_", " ");
+                                    int year1 = Integer.parseInt(info[2].trim());
+                                    String genre1 = info[3];
+                                    movies.add(new Movie(index, name1, year1, genre1));
+                                }
+                                for (Movie singleMovie : movies) {
+                                    if (singleMovie.getYear() == year){
+                                        System.out.println(singleMovie);
+                                    }
+                                }
+                            } catch (IOException e) {
+                                System.out.println("Nothing found");
+                                e.printStackTrace();
+                            }
                             break;
                         case 3:
                             System.out.println("Enter genre");
+                            String genre = new Scanner(System.in).nextLine();
+                            try {
+                                List<String> lines = Files.readAllLines(Paths.get("dataBase.txt"));
+                                List<Movie> movies = new ArrayList<>();
+                                for (String line : lines) {
+                                    String[] info = line.split(" ");
+                                    int index = Integer.parseInt(info[0]);
+                                    String name1 = info[1].replaceAll("_!_", " ");
+                                    int year1 = Integer.parseInt(info[2].trim());
+                                    String genre1 = info[3];
+                                    movies.add(new Movie(index, name1, year1, genre1));
+                                }
+                                for (Movie singleMovie : movies) {
+                                    if (singleMovie.getGenre().contains(genre)){
+                                        System.out.println(singleMovie);
+                                    }
+                                }
+                            } catch (IOException e) {
+                                System.out.println("Nothing found");
+                                e.printStackTrace();
+                            }
                             break;
                     }
                     break;
