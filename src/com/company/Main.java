@@ -1,14 +1,10 @@
 package com.company;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,7 +16,6 @@ public class Main {
             boolean isQuiting = false;
             switch (new Scanner(System.in).nextInt()) {
                 case 1:
-                    System.out.println("enter movie title");
                     System.out.println("enter movie title");
                     Movie movie = new Movie();
                     while (true) {
@@ -52,18 +47,17 @@ public class Main {
                             System.out.println("No input entered");
                         }
                     }
-                    String movieAsString = String.valueOf(movie)+"\n";
+                    String movieAsString = movie +"\n";
+                    try {
+                        boolean writeSuccessful = writeMovieToFile(movieAsString);
+                        System.out.println("Movie saved");
+                    } catch (IOException e) {
+                        System.out.println("Couldn't create/open the file");
+                        e.printStackTrace();
+                    }
                     try {
                         Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                         System.out.println("Movie saved");
-
-                    } catch (FileNotFoundException e) {
-                        try {
-                            Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                            System.out.println("Movie saved");
-                        } catch (IOException ex) {
-                            System.out.println("Error! Could not save the movie.");
-                        }
                     } catch (IOException exception) {
                         System.out.println("Error! Could not save the movie.");
                     }
@@ -74,26 +68,12 @@ public class Main {
                         case 1:
                             System.out.println("Enter name");
                             String name = new Scanner(System.in).nextLine();
-                            try {
-                                List<String> lines = Files.readAllLines(Paths.get("dataBase.txt"));
-                                List<Movie> movies = new ArrayList<>();
-                                for (String line : lines) {
-                                    String[] info = line.split(" ");
-                                    int index = Integer.parseInt(info[0]);
-                                    String name1 = info[1].replaceAll("_!_", " ");
-                                    int year1 = Integer.parseInt(info[2].trim());
-                                    String genre1 = info[3];
-                                    movies.add(new Movie(index, name1, year1, genre1));
-                                }
-                                for (Movie singleMovie : movies) {
-                                    if (singleMovie.getTitle().contains(name)) {
-                                        System.out.println(singleMovie);
-                                    }
-                                }
-                            } catch (IOException e) {
-                                System.out.println("Nothing found");
-                                break;
+                            List<Movie> results = searchByName(name);
+                            System.out.println("I__Title______Year__Genre___Description__Rented_");
+                            for (Movie singleMovie : results) {
+                                System.out.println(singleMovie);
                             }
+                            System.out.println("------------------");
                             break;
                         case 2:
                             System.out.println("Enter year");
@@ -146,6 +126,21 @@ public class Main {
                     }
                     break;
                 case 3:
+                    System.out.println("Enter Title");
+                    String title = new Scanner(System.in).nextLine();
+                    List<Movie> movies = searchByName(title);
+                    for (Movie movie1: movies) {
+                        System.out.println(movie1);
+                    }
+                    break;
+
+                case 4:
+                    List<Movie> allMovies = getAllMovies();
+                    for (Movie movie1: allMovies) {
+                        System.out.println(movie1);
+                    }
+                    break;
+                case 5:
                     isQuiting = true;
                     break;
             }
@@ -153,5 +148,50 @@ public class Main {
                 break;
             }
         }
+    }
+
+    private static boolean writeMovieToFile(String movieAsString) throws IOException {
+        Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        System.out.println("Movie saved");
+        return false;
+    }
+
+    private static List<Movie> getAllMovies() {
+        List<String> lines;
+        List<Movie> movies = new ArrayList<>();
+        try {
+            lines = Files.readAllLines(Paths.get("dataBase.txt"));
+            for (String line : lines) {
+                String[] info = line.split(" ");
+                movies.add(new Movie(Integer.parseInt(info[0]), info[1].replaceAll("_!_", " "), Integer.parseInt(info[2].trim()), info[3]));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+
+    private static List<Movie> searchByName(String name) {
+        List<String> lines;
+        List<Movie> movies = new ArrayList<>();
+        try {
+            lines = Files.readAllLines(Paths.get("dataBase.txt"));
+            for (String line : lines) {
+                String[] info = line.split(" ");
+                movies.add(new Movie(Integer.parseInt(info[0]), info[1].replaceAll("_!_", " "), Integer.parseInt(info[2].trim()), info[3]));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        for (Movie singleMovie : movies) {
+//            if (!singleMovie.getTitle().contains(name)) {
+//                movies.remove(singleMovie);
+//            }
+//        }
+        movies.removeIf(singleMovie -> !singleMovie.getTitle().contains(name));
+
+
+
+        return movies;
     }
 }

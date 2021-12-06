@@ -16,14 +16,7 @@ public class Movie {
         this.title = title;
         this.year = year;
         this.genre = genre;
-    }
-
-    public Movie(int index, String title, int year, String genre, String description) {
-        this.index = index;
-        this.title = title;
-        this.year = year;
-        this.genre = genre;
-        this.description = description;
+        this.description = "Enter description";
     }
 
     public int getIndex() {
