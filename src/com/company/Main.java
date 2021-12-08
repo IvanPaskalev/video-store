@@ -107,8 +107,24 @@ public class Main {
                     System.out.println("Enter Title");
                     String title = new Scanner(System.in).nextLine();
                     List<Movie> movies = searchByName(title);
-                    for (Movie movie1: movies) {
-                        System.out.println(movie1);
+                    if (movies.isEmpty()){
+                        System.out.println("Nothing found");
+                    } else {
+                        System.out.println("Results:\n");
+                        for (Movie singleMovie : movies) {
+                            System.out.println(singleMovie);
+                        }
+                        System.out.println("-----------------------");
+                        System.out.println("What do you want to do?\n1 - Correct\n2 - delete");
+                        switch (new Scanner(System.in).nextInt()){
+                            case 1:
+                                for (Movie singleMovie : movies) {
+                                    System.out.println(singleMovie);
+                                } // -> What to correct? Must assign IDs/Method for IDs!
+                                break;
+                            case 2:
+                                break;
+                        }
                     }
                     break;
 
