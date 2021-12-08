@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         while (true) {
-            System.out.println("Добър ден!\nАко изкате да запишете нов филм, натиснете 1\nАко искате да намерите вече записан филм, натиснете 2\nАко искате да излезете от програмата, натиснете 3");
+            System.out.println("Hi!\n1 - Save new movie\n2 - search\n3 - Edit\n4 - See all movies\n5 - Exit");
             boolean isQuiting = false;
             switch (new Scanner(System.in).nextInt()) {
                 case 1:
@@ -55,12 +55,6 @@ public class Main {
                         System.out.println("Couldn't create/open the file");
                         e.printStackTrace();
                     }
-                    try {
-                        Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                        System.out.println("Movie saved");
-                    } catch (IOException exception) {
-                        System.out.println("Error! Could not save the movie.");
-                    }
                     break;
                 case 2:
                     System.out.println("If you want to search title press 1\nIf you want to search year press 2\nIf you want to search genre press 3");
@@ -69,58 +63,42 @@ public class Main {
                             System.out.println("Enter name");
                             String name = new Scanner(System.in).nextLine();
                             List<Movie> results = searchByName(name);
-                            System.out.println("I__Title______Year__Genre___Description__Rented_");
-                            for (Movie singleMovie : results) {
-                                System.out.println(singleMovie);
+                            if (results.isEmpty()){
+                                System.out.println("Nothing found");
+                            } else {
+                                System.out.println("I__Title______Year__Genre___Description__Rented_");
+                                for (Movie singleMovie : results) {
+                                    System.out.println(singleMovie);
+                                }
+                                System.out.println("------------------");
                             }
-                            System.out.println("------------------");
                             break;
                         case 2:
                             System.out.println("Enter year");
                             int year = new Scanner(System.in).nextInt();
-                            try {
-                                List<String> lines = Files.readAllLines(Paths.get("dataBase.txt"));
-                                List<Movie> movies = new ArrayList<>();
-                                for (String line : lines) {
-                                    String[] info = line.split(" ");
-                                    int index = Integer.parseInt(info[0]);
-                                    String name1 = info[1].replaceAll("_!_", " ");
-                                    int year1 = Integer.parseInt(info[2].trim());
-                                    String genre1 = info[3];
-                                    movies.add(new Movie(index, name1, year1, genre1));
-                                }
-                                for (Movie singleMovie : movies) {
-                                    if (singleMovie.getYear() == year){
-                                        System.out.println(singleMovie);
-                                    }
-                                }
-                            } catch (IOException e) {
+                            List<Movie> resultsYear = searchByYear(year);
+                            if (resultsYear.isEmpty()){
                                 System.out.println("Nothing found");
-                                e.printStackTrace();
+                            } else {
+                                System.out.println("I__Title______Year__Genre___Description__Rented_");
+                                for (Movie singleMovie : resultsYear) {
+                                    System.out.println(singleMovie);
+                                }
+                                System.out.println("------------------");
                             }
                             break;
                         case 3:
                             System.out.println("Enter genre");
                             String genre = new Scanner(System.in).nextLine();
-                            try {
-                                List<String> lines = Files.readAllLines(Paths.get("dataBase.txt"));
-                                List<Movie> movies = new ArrayList<>();
-                                for (String line : lines) {
-                                    String[] info = line.split(" ");
-                                    int index = Integer.parseInt(info[0]);
-                                    String name1 = info[1].replaceAll("_!_", " ");
-                                    int year1 = Integer.parseInt(info[2].trim());
-                                    String genre1 = info[3];
-                                    movies.add(new Movie(index, name1, year1, genre1));
-                                }
-                                for (Movie singleMovie : movies) {
-                                    if (singleMovie.getGenre().contains(genre)){
-                                        System.out.println(singleMovie);
-                                    }
-                                }
-                            } catch (IOException e) {
+                            List<Movie> resultsGenre = searchByGenre(genre);
+                            if (resultsGenre.isEmpty()){
                                 System.out.println("Nothing found");
-                                e.printStackTrace();
+                            } else {
+                                System.out.println("I__Title______Year__Genre___Description__Rented_");
+                                for (Movie singleMovie : resultsGenre) {
+                                    System.out.println(singleMovie);
+                                }
+                                System.out.println("------------------");
                             }
                             break;
                     }
@@ -148,6 +126,45 @@ public class Main {
                 break;
             }
         }
+    }
+
+    private static List<Movie> searchByGenre(String genre) {
+        List<String> lines;
+        List<Movie> movies = new ArrayList<>();
+        try {
+            lines = Files.readAllLines(Paths.get("dataBase.txt"));
+            for (String line : lines) {
+                String[] info = line.split(" ");
+                movies.add(new Movie(Integer.parseInt(info[0]), info[1].replaceAll("_!_", " "), Integer.parseInt(info[2].trim()), info[3]));
+            }
+            movies.removeIf(singleMovie -> !singleMovie.getGenre().contains(genre));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+
+    private static List<Movie> searchByYear(int year) {
+        List<String> lines;
+        List<Movie> movies = new ArrayList<>();
+        try {
+            lines = Files.readAllLines(Paths.get("dataBase.txt"));
+            for (String line : lines) {
+                String[] info = line.split(" ");
+                movies.add(new Movie(Integer.parseInt(info[0]), info[1].replaceAll("_!_", " "), Integer.parseInt(info[2].trim()), info[3]));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        for (Movie singleMovie : movies) {
+//            if (singleMovie.getYear() != year){
+//                movies.remove(singleMovie);
+//            }
+//        }
+        movies.removeIf(singleMovie -> singleMovie.getYear() != year);
+
+        return movies;
     }
 
     private static boolean writeMovieToFile(String movieAsString) throws IOException {
@@ -180,6 +197,8 @@ public class Main {
                 String[] info = line.split(" ");
                 movies.add(new Movie(Integer.parseInt(info[0]), info[1].replaceAll("_!_", " "), Integer.parseInt(info[2].trim()), info[3]));
             }
+            movies.removeIf(singleMovie -> !singleMovie.getTitle().contains(name));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -188,10 +207,11 @@ public class Main {
 //                movies.remove(singleMovie);
 //            }
 //        }
-        movies.removeIf(singleMovie -> !singleMovie.getTitle().contains(name));
+
 
 
 
         return movies;
+
     }
 }
