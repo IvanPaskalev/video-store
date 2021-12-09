@@ -16,44 +16,25 @@ public class Main {
             boolean isQuiting = false;
             switch (new Scanner(System.in).nextInt()) {
                 case 1:
-                    System.out.println("enter movie title");
-                    Movie movie = new Movie();
-                    while (true) {
-                        String title = new Scanner(System.in).nextLine().replaceAll(" ", "_!_");
-                        if (!title.isEmpty()) {
-                            movie.setTitle(title);
-                            break;
+                    Movie movie = createMovieObject();
+                    while (true){ // Aankcjjnsjnv!!!
+                        boolean isThere = true;
+                        String movieAsString = movie +"\n";
+                        List<Movie> currentList = getAllMovies();
+                        if (currentList.contains(movie)){
+                            System.out.println("This movie already exists");
+                            isThere = false;
+
                         } else {
-                            System.out.println("No input entered");
+                            try {
+                                boolean writeSuccessful = writeMovieToFile(movieAsString);
+                                System.out.println("Movie saved");
+                            } catch (IOException e) {
+                                System.out.println("Couldn't create/save the movie");
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                    System.out.println("Enter year");
-                    while (true) {
-                        int year = new Scanner(System.in).nextInt();
-                        if (year != 0) {
-                            movie.setYear(year);
-                            break;
-                        } else {
-                            System.out.println("No input entered");
-                        }
-                    }
-                    System.out.println("enter genre");
-                    while (true) {
-                        String genre = new Scanner(System.in).nextLine();
-                        if (!genre.isEmpty()) {
-                            movie.setGenre(genre);
-                            break;
-                        } else {
-                            System.out.println("No input entered");
-                        }
-                    }
-                    String movieAsString = movie +"\n";
-                    try {
-                        boolean writeSuccessful = writeMovieToFile(movieAsString);
-                        System.out.println("Movie saved");
-                    } catch (IOException e) {
-                        System.out.println("Couldn't create/open the file");
-                        e.printStackTrace();
+                        break;
                     }
                     break;
                 case 2:
@@ -144,6 +125,41 @@ public class Main {
         }
     }
 
+    private static Movie createMovieObject() {
+        System.out.println("enter movie title");
+        Movie movie = new Movie();
+        while (true) {
+            String title = new Scanner(System.in).nextLine().replaceAll(" ", "_!_");
+            if (!title.isEmpty()) {
+                movie.setTitle(title);
+                break;
+            } else {
+                System.out.println("No input entered");
+            }
+        }
+        System.out.println("Enter year");
+        while (true) {
+            int year = new Scanner(System.in).nextInt();
+            if (year != 0) {
+                movie.setYear(year);
+                break;
+            } else {
+                System.out.println("No input entered");
+            }
+        }
+        System.out.println("enter genre");
+        while (true) {
+            String genre = new Scanner(System.in).nextLine();
+            if (!genre.isEmpty()) {
+                movie.setGenre(genre);
+                break;
+            } else {
+                System.out.println("No input entered");
+            }
+        }
+        return movie;
+    }
+
     private static List<Movie> searchByGenre(String genre) {
         List<String> lines;
         List<Movie> movies = new ArrayList<>();
@@ -185,7 +201,6 @@ public class Main {
 
     private static boolean writeMovieToFile(String movieAsString) throws IOException {
         Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        System.out.println("Movie saved");
         return false;
     }
 
@@ -199,7 +214,6 @@ public class Main {
                 movies.add(new Movie(Integer.parseInt(info[0]), info[1].replaceAll("_!_", " "), Integer.parseInt(info[2].trim()), info[3]));
             }
         } catch (IOException e) {
-            e.printStackTrace();
         }
         return movies;
     }
