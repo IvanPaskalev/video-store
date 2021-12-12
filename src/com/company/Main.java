@@ -16,16 +16,20 @@ public class Main {
             boolean isQuiting = false;
             switch (new Scanner(System.in).nextInt()) {
                 case 1:
+                    int index = 0;
+                    try {
+                        List<Movie> movies = getAllMovies();
+                        index = movies.size() + 1;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Movie movie = createMovieObject();
+                    movie.setIndex(index);
                     while (true){ // Aankcjjnsjnv!!!
-                        boolean isThere = true;
+                        boolean isThere = false;
                         String movieAsString = movie +"\n";
                         List<Movie> currentList = getAllMovies();
-                        if (currentList.contains(movie)){
-                            System.out.println("This movie already exists");
-                            isThere = false;
-
-                        } else {
+                        if (!currentList.contains(movie)){
                             try {
                                 boolean writeSuccessful = writeMovieToFile(movieAsString);
                                 System.out.println("Movie saved");
@@ -33,6 +37,11 @@ public class Main {
                                 System.out.println("Couldn't create/save the movie");
                                 e.printStackTrace();
                             }
+                        } else {
+                            System.out.println("This movie already exists");
+                            isThere = true;
+                            break;
+
                         }
                         break;
                     }
@@ -87,20 +96,27 @@ public class Main {
                 case 3:
                     System.out.println("Enter Title");
                     String title = new Scanner(System.in).nextLine();
-                    List<Movie> movies = searchByName(title);
-                    if (movies.isEmpty()){
+                    List<Movie> movieSearch = searchByName(title); //Must return an Object!?
+                    if (movieSearch.isEmpty()){
                         System.out.println("Nothing found");
                     } else {
-                        System.out.println("Results:\n");
-                        for (Movie singleMovie : movies) {
+                        System.out.println("Results:");
+                        for (Movie singleMovie : movieSearch) {
                             System.out.println(singleMovie);
                         }
                         System.out.println("-----------------------");
                         System.out.println("What do you want to do?\n1 - Correct\n2 - delete");
                         switch (new Scanner(System.in).nextInt()){
                             case 1:
-                                for (Movie singleMovie : movies) {
+                                for (Movie singleMovie : movieSearch) {
+                                    singleMovie = createMovieObject();
+//                                    singleMovie.setIndex();
+                                    List<Movie> allMovies = getAllMovies(); // -> How to replace them?..
                                     System.out.println(singleMovie);
+                                    for (Movie movie1 : allMovies) {
+//                                        allMovies.removeIf();
+                                    }
+
                                 } // -> What to correct? Must assign IDs/Method for IDs!
                                 break;
                             case 2:
