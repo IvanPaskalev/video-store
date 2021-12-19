@@ -17,35 +17,18 @@ public class Main {
             switch (new Scanner(System.in).nextInt()) {
                 case 1:
                     int index = 0;
-                    try {
-                        List<Movie> movies = getAllMovies();
-                        index = movies.size() + 1;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    List<Movie> movies = getAllMovies();
+                    index = movies.size();
                     Movie movie = createMovieObject();
-                    movie.setIndex(index);
-                    while (true){ // Aankcjjnsjnv!!!
-                        boolean isThere = false;
-                        String movieAsString = movie +"\n";
-                        List<Movie> currentList = getAllMovies();
-                        if (!currentList.contains(movie)){
-                            try {
-                                boolean writeSuccessful = writeMovieToFile(movieAsString);
-                                System.out.println("Movie saved");
-                            } catch (IOException e) {
-                                System.out.println("Couldn't create/save the movie");
-                                e.printStackTrace();
-                            }
-                        } else {
-                            System.out.println("This movie already exists");
-                            isThere = true;
-                            break;
-
-                        }
-                        break;
+                    if (movie.equals(null)){
+                        System.out.println("Movie already exists");
+                    }else {
+                        movie.setIndex(index);
+                        writeMovieToFile(String.valueOf(movie));
                     }
                     break;
+
+
                 case 2:
                     System.out.println("If you want to search title press 1\nIf you want to search year press 2\nIf you want to search genre press 3");
                     switch (new Scanner(System.in).nextInt()) {
@@ -152,6 +135,13 @@ public class Main {
             } else {
                 System.out.println("No input entered");
             }
+            List<Movie> allMovies = getAllMovies();
+            for (Movie singleMovie : allMovies) {
+                if (singleMovie.getTitle().equalsIgnoreCase(title)){
+                    return null;
+                }
+            }
+
         }
         System.out.println("Enter year");
         while (true) {
@@ -215,8 +205,12 @@ public class Main {
         return movies;
     }
 
-    private static boolean writeMovieToFile(String movieAsString) throws IOException {
-        Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    private static boolean writeMovieToFile(String movieAsString) {
+        try {
+            Files.write(Paths.get("dataBase.txt"), movieAsString.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
